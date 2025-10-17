@@ -4,7 +4,7 @@ return [
     /**
      * The path to use for the routes.
      */
-    'path' => 'kvdb',
+    'path' => 'kvdb/v1',
 
     /**
      * The domain to use for the routes.

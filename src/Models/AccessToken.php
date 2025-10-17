@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * @property string $id
  * @property string $bucket_id
+ * @property string $secret
  * @property string $name
  * @property array $abilities
  * @property string $created_at
@@ -26,6 +27,8 @@ class AccessToken extends Model
     protected $guarded = [];
 
     protected $casts = [
+        'is_revoked' => 'boolean',
+        'expires_at' => 'datetime',
         'abilities' => 'array',
     ];
 

@@ -48,9 +48,10 @@ class ServiceProvider extends Base
      */
     private function registerCommands(): void
     {
+        $this->commands([Commands\MigrateCommand::class]);
+
         if ($this->app->runningInConsole()) {
             $this->commands([
-                Commands\MigrateCommand::class,
                 Commands\InspectCommand::class,
             ]);
         }

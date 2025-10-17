@@ -37,7 +37,7 @@ class Database
     public static function getDiskAndPath(string $uuid): array
     {
         $disk = Storage::disk(config('kvdb.storage.disk'));
-        $path = sprintf('%s/%s.sqlite', config('kvdb.storage.path'), $uuid);
+        $path = sprintf('%s%s%s.sqlite', config('kvdb.storage.path'), DIRECTORY_SEPARATOR, $uuid);
         return [$disk, $path];
     }
 

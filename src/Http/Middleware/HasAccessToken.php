@@ -17,7 +17,7 @@ class HasAccessToken
     public function handle(Request $request, Closure $next, string $ability): Response
     {
         $bucketId = $request->route('bucket');
-        $accessToken = AccessToken::query()->whereKey($request->bearerToken())->first();
+        $accessToken = AccessToken::query()->where(['secret' => $request->bearerToken()])->first();
 
         if ($accessToken === null || $accessToken->bucket_id !== $bucketId || !$accessToken->can($ability)) {
             return response()->json([

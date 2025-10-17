@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,6 +13,7 @@ return new class extends Migration
         Schema::create('kvdb_access_tokens', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('bucket_id')->index();
+            $table->string('secret', 44)->unique();
             $table->timestamp('expires_at')->nullable();
             $table->boolean('is_revoked')->default(false);
             $table->json('abilities');

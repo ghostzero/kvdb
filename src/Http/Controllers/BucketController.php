@@ -2,10 +2,11 @@
 
 namespace GhostZero\Kvdb\Http\Controllers;
 
+use GhostZero\Kvdb\Console\Commands\MigrateCommand;
 use GhostZero\Kvdb\Models\Bucket;
+use GhostZero\Kvdb\Support\Database;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Str;
 
 class BucketController extends Controller
 {
@@ -19,13 +20,15 @@ class BucketController extends Controller
         /** @var Bucket $bucket */
         $bucket = Bucket::query()->forceCreate($attributes);
 
-        $bucket->accessTokens()->forceCreate([
-            'token' => Str::uuid(),
-            'abilities' => ['read', 'write'],
-        ]);
+        touch(Database::getRealPath($bucket->getKey()));
 
-        Artisan::call('app:create-database', ['uuid' => $bucket->getKey()]);
+        Artisan::call(MigrateCommand::class, ['--database' => $bucket->getKey()]);
 
         return $bucket->loadMissing('accessTokens');
+    }
+
+    public function index()
+    {
+        return Bucket::with('accessTokens')->get();
     }
 }

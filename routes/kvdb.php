@@ -7,11 +7,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::group([
     'as' => 'kvdb.',
-    'prefix' => config('kvdb.path', 'kvdb'),
+    'prefix' => config('kvdb.path', 'kvdb/v1'),
     'domain' => config('kvdb.domain'),
 ], function () {
+    Route::get('/buckets', [BucketController::class, 'index'])
+        ->name('buckets.index');
+
     Route::post('/buckets', [BucketController::class, 'store'])
-        ->name('crud.create');
+        ->name('buckets.create');
 
     Route::get('/{bucket}', [CRUDController::class, 'list'])
         ->middleware([HasAccessToken::class . ':read'])
