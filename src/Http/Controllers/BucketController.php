@@ -14,7 +14,7 @@ class BucketController extends Controller
     {
         $attributes = $request->validate([
             'email' => ['required', 'email'],
-            'description' => ['nullable', 'string'],
+            'user_ref' => ['nullable', 'string'],
         ]);
 
         /** @var Bucket $bucket */
@@ -25,10 +25,5 @@ class BucketController extends Controller
         Artisan::call(MigrateCommand::class, ['--database' => $bucket->getKey()]);
 
         return $bucket->loadMissing('accessTokens');
-    }
-
-    public function index()
-    {
-        return Bucket::with('accessTokens')->get();
     }
 }
