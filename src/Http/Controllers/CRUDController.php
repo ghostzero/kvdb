@@ -7,7 +7,6 @@ use GhostZero\Kvdb\Support\Database;
 use Illuminate\Database\Connection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class CRUDController extends Controller
@@ -110,8 +109,6 @@ class CRUDController extends Controller
      */
     public function atomic(Request $request, string $bucket): array
     {
-        Log::info('atomic', $request->all());
-
         $attributes = $request->validate([
             'checks' => ['required', 'array'],
             'checks.*.key' => ['required', 'array'],
@@ -130,15 +127,26 @@ class CRUDController extends Controller
             foreach ($attributes['checks'] as $check) {
                 $builder = $connection->table('kvdb_store')->where([
                     ['key_path', '=', implode('/', $check['key'])],
-                    ['version', '=', $check['version']],
                 ]);
 
-                if (!$builder->exists() && $check['version'] !== null) {
-                    return $this->fail(sprintf(
-                        'check failed: %s version %s',
-                        implode('/', $check['key']),
-                        $check['version']
-                    ));
+                $document = $builder->first(['version']);
+
+                if (!isset($check['version'])) {
+                    if ($document) {
+                        return $this->fail(sprintf(
+                            'check failed: %s should not exist',
+                            implode('/', $check['key'])
+                        ));
+                    }
+                } else {
+                    if (!$document || $document->version !== $check['version']) {
+                        return $this->fail(sprintf(
+                            'check failed: %s version is %s and should be %s',
+                            implode('/', $check['key']),
+                            $document ? $document->version : 'null',
+                            $check['version']
+                        ));
+                    }
                 }
             }
 
