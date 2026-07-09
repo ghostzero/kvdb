@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property string $id
+ * @property array|null $jwt_config
+ * @property array|null $frontend_rules
  */
 class Bucket extends Model
 {
@@ -16,6 +18,11 @@ class Bucket extends Model
     protected $table = 'kvdb_buckets';
 
     protected $guarded = [];
+
+    protected $casts = [
+        'jwt_config' => 'array',
+        'frontend_rules' => 'array',
+    ];
 
     public function accessTokens(): HasMany
     {
